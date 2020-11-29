@@ -22,8 +22,24 @@ module Telegram
         logger.info('Starting bot')
         running = true
         Signal.trap('INT') { running = false }
-        fetch_updates(&block) while running
+        while running
+          perform_task(task: options[:task], interval: options[:interval]) if options[:task]
+          fetch_updates(&block)
+        end
         exit
+      end
+
+      def perform_task(task: nil, interval: nil)
+        last_invocation = instance_variable_get(:@last_invocation)
+        return set_last_invocation unless last_invocation
+        return if Time.current - last_invocation <= interval
+
+        task.call 
+        set_last_invocation
+      end
+
+      def set_last_invocation
+        instance_variable_set(:@last_invocation, Time.current)
       end
 
       def fetch_updates
