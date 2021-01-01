@@ -60,14 +60,12 @@ module Telegram
       def method_missing(method_name, *args, &block)
         endpoint = method_name.to_s
         endpoint = camelize(endpoint) if endpoint.include?('_')
-
         ENDPOINTS.include?(endpoint) ? call(endpoint, *args) : super
       end
 
       def respond_to_missing?(*args)
         method_name = args[0].to_s
         method_name = camelize(method_name) if method_name.include?('_')
-
         ENDPOINTS.include?(method_name) || super
       end
 

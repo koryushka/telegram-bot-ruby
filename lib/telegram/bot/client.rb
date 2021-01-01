@@ -23,19 +23,14 @@ module Telegram
         running = true
         Signal.trap('INT') { running = false }
         while running
-          perform_task(task: options[:task], interval: options[:interval]) if options[:task]
+          performer.call
           fetch_updates(&block)
         end
         exit
       end
 
-      def perform_task(task: nil, interval: nil)
-        last_invocation = instance_variable_get(:@last_invocation)
-        return set_last_invocation unless last_invocation
-        return if Time.current - last_invocation <= interval
-
-        task.call 
-        set_last_invocation
+      def performer(task: nil, interval: nil)
+        @performer ||= TaskPerformer.new(task: options[:task], interval: options[:interval])
       end
 
       def set_last_invocation

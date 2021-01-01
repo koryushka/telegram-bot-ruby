@@ -9,6 +9,7 @@ require 'telegram/bot/exceptions'
 require 'telegram/bot/api'
 require 'telegram/bot/null_logger'
 require 'telegram/bot/client'
+require 'telegram/bot/task_performer'
 require 'telegram/bot/version'
 require 'telegram/bot/configuration'
 
